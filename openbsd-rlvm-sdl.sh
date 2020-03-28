@@ -12,7 +12,7 @@ else
 	exit 1
 fi
 
-# Download the repository from FWGS
+# Download the repository from eglaysher
 
 git clone https://github.com/eglaysher/rlvm rlvm-sdl
 cd rlvm-sdl
