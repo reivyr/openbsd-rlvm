@@ -1,0 +1,252 @@
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConscript.luarlvm ../rlvm-sdl2-mod/SConscript.luarlvm
+--- ./SConscript.luarlvm	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/SConscript.luarlvm	Wed Mar 25 13:52:18 2020
+@@ -35,7 +35,7 @@
+ if config.CheckLibWithHeader('lua5.1', 'lua5.1/lua.h', 'cpp'):
+   env['BUILD_LUA_TESTS'] = True
+ else:
+-  print "Not building luaRlvm. (Don't worry, it's only a testing tool!)"
++  print ("Not building luaRlvm. (Don't worry, it's only a testing tool!)")
+ 
+ test_env = config.Finish()
+ 
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConstruct ../rlvm-sdl2-mod/SConstruct
+--- ./SConstruct	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/SConstruct	Thu Mar 26 09:52:41 2020
+@@ -19,8 +19,12 @@
+ 
+ # Set libraries used by all configurations and all binaries in rlvm.
+ env = Environment(
++  ENV = os.environ,
++
+   tools = ["default", "rlvm"],
+ 
++  LIBPATH = ["/usr/local/lib"],
++
+   LIBS = ["z"],
+ 
+   LOCAL_LIBS = [],
+@@ -29,6 +33,8 @@
+     "#/build",
+     "#/src",
+     "#/vendor",
++    "/usr/X11R6/include",
++    "/usr/local/include"
+   ],
+ 
+   CPPFLAGS = [
+@@ -82,7 +88,7 @@
+       "boost_iostreams",
+       "boost_filesystem",
+       "boost_date_time",
+-      "boost_thread",
++      "boost_thread-mt",
+       "boost_system"])
+ 
+ if GetOption("fullstatic"):
+@@ -188,9 +194,9 @@
+ def VerifyLibrary(config, library, header):
+   if not config.CheckLibWithHeader(library, header, "c"):
+     if config.CheckLib(library):
+-      print "You have " + library + " installed, but the development headers aren't installed."
++      print ("You have " + library + " installed, but the development headers aren't installed.")
+     else:
+-      print "You need " + library + " to compile this program!"
++      print ("You need " + library + " to compile this program!")
+     Exit(1)
+ 
+ def CheckForSystemLibrary(config, library_dict, componentlist):
+@@ -210,7 +216,7 @@
+ 
+   if not res:
+     lib_name = library_dict['library']
+-    print "(Using included version of %s)" % lib_name
++    print ("(Using included version of %s)" % lib_name)
+     componentlist.append(lib_name)
+     config.Define("HAVE_LIB" + lib_name.replace("-", "_"), 1,
+                   "Define to 1 if you have the `%s' library." % lib_name)
+@@ -226,7 +232,7 @@
+                                       },
+                        config_h="build/config.h")
+ if not config.CheckBoost('1.40'):
+-  print "Boost version >= 1.40 needed to compile rlvm!"
++  print ("Boost version >= 1.40 needed to compile rlvm!")
+   Exit(1)
+ 
+ VerifyLibrary(config, 'pthread', 'pthread.h')
+@@ -245,7 +251,7 @@
+ if env['PLATFORM'] != 'darwin':
+   VerifyLibrary(config, 'SDL2', 'SDL2/SDL.h')
+ else:
+-  print "Can't properly detect SDL under OSX. Assuming you have the libraries."
++  print ("Can't properly detect SDL under OSX. Assuming you have the libraries.")
+ 
+ # Libraries we need, but will use a local copy if not installed.
+ local_sdl_libraries = [
+@@ -281,6 +287,7 @@
+ # Get the configuration from sdl and freetype
+ env.ParseConfig("sdl2-config --cflags")
+ env.ParseConfig("freetype-config --cflags --libs")
++config.CheckLibWithHeader('intl', 'libintl.h', "cpp")
+ 
+ env = config.Finish()
+ 
+@@ -313,7 +320,6 @@
+   # Now add release optimizations to the environment
+   env.Append(
+     CPPFLAGS = [
+-      "-Os",
+       "-DNDEBUG",
+       "-DBOOST_DISABLE_ASSERTS"
+     ]
+@@ -359,13 +365,7 @@
+              "profiler"]
+   )
+ else:
+-  # Add debugging flags to all binaries here
+-  env.Append(
+-    CPPFLAGS = [
+-      "-g",
+-      "-O0"
+-    ]
+-  )
++  pass
+ 
+ # Cross platform core of rlvm. Produces librlvm.a and libsystem_sdl.a
+ env.SConscript("SConscript",
+@@ -385,24 +385,6 @@
+                  variant_dir="$BUILD_DIR/",
+                  duplicate=0,
+                  exports='env')
+-
+-# Copy the platform independent SEEN.TXT files to output (we no longer depend
+-# on rldev because I can no longer reliably compile it).
+-env.SConscript("test/SConscript.rlc",
+-               variant_dir="build/test",
+-               duplicate=0,
+-               exports='env')
+-
+-# Build the rlvmTests binary that uses those SEEN.TXT files.
+-env.SConscript("SConscript.test",
+-               variant_dir="$BUILD_DIR/",
+-               duplicate=0,
+-               exports='env')
+-
+-env.SConscript("SConscript.luarlvm",
+-               variant_dir="$BUILD_DIR/",
+-               duplicate=0,
+-               exports='env')
+ 
+ if GetOption("coverage"):
+   env.SConscript("SConscript.coverage",
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/buildhik.py ../rlvm-sdl2-mod/scripts/buildhik.py
+--- ./scripts/buildhik.py	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/scripts/buildhik.py	Wed Mar 25 13:53:47 2020
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python3
+ #
+ # A fairly naive script which takes a JSON file generated from dumphik.py and
+ # tries to generate a valid HIK file.
+@@ -17,10 +17,10 @@
+       output.write(struct.pack("i", len(x)))
+       output.write(x)
+     else:
+-      print type(x)
++      print (type(x))
+ 
+ if len(sys.argv) != 3:
+-  print "Usage: " + sys.argv[0] + " <input json file> <output hik>"
++  print ("Usage: " + sys.argv[0] + " <input json file> <output hik>")
+   exit(-1)
+ 
+ with open(sys.argv[1], "rb") as input:
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/dumphik.py ../rlvm-sdl2-mod/scripts/dumphik.py
+--- ./scripts/dumphik.py	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/scripts/dumphik.py	Wed Mar 25 13:54:50 2020
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python3
+ #
+ # A fairly naive script which dumps out the data of a HIK file to a JSON file
+ # for editing and reencoding with buildhik.py.
+@@ -48,7 +48,7 @@
+ results = [ ]
+ 
+ if len(sys.argv) != 3:
+-  print "Usage: " + sys.argv[0] + " <input hik file> <output json>"
++  print ("Usage: " + sys.argv[0] + " <input hik file> <output json>")
+   exit(-1)
+ 
+ with open(sys.argv[1], "rb") as f:
+@@ -67,7 +67,7 @@
+       if property_id in property_formats:
+         record.append([property_id, property_formats[property_id](f)])
+       else:
+-        print "huh: " + str(property_id)
++        print ("huh: " + str(property_id))
+ 
+       property_id = struct.unpack("i", f.read(0x4))[0]
+ 
+@@ -77,4 +77,4 @@
+     results.append(record)
+ 
+ with open(sys.argv[2], "w") as f:
+-  print >>f, json.dumps(results, sort_keys=True, indent=4)
++  print (json.dumps(results, sort_keys=True, indent=4), file=f)
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/fix_guards.py ../rlvm-sdl2-mod/scripts/fix_guards.py
+--- ./scripts/fix_guards.py	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/scripts/fix_guards.py	Wed Mar 25 13:55:07 2020
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python3
+ 
+ import sys
+ import os
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./site_scons/site_tools/rlvm.py ../rlvm-sdl2-mod/site_scons/site_tools/rlvm.py
+--- ./site_scons/site_tools/rlvm.py	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/site_scons/site_tools/rlvm.py	Wed Mar 25 13:57:03 2020
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/python3
+ 
+ """
+ Support for building rlvm objects
+@@ -56,19 +56,19 @@
+   objects.extend(args)
+ 
+   # TODO: Deal with RLVM_LIBS in a shared objecty way
+-  if kwargs.has_key('rlvm_libs'):
++  if 'rlvm_libs' in kwargs.keys():
+     for lib_name in kwargs['rlvm_libs']:
+       objects.append(env['LIBPREFIX'] + lib_name + env['LIBSUFFIX'])
+ 
+   # Add all static libraries from the various categories
+-  if kwargs.has_key('use_lib_set'):
++  if 'use_lib_set' in kwargs.keys():
+     for lib_set_name in kwargs['use_lib_set']:
+       lib_set = cloned_env[_MakeStaticName(lib_set_name)]
+       if lib_set:
+         objects.extend(lib_set)
+ 
+   # First, we need to see if this is a static build
+-  if kwargs.has_key("full_static_build") and kwargs['full_static_build'] == True:
++  if "full_static_build" in kwargs.keys() and kwargs['full_static_build'] == True:
+     # We must unpack each entry in LIBS and try to locate a static library to
+     old_libs = cloned_env['LIBS']
+     libpaths = cloned_env['LIBPATH']
+diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./src/systems/base/text_system.cc ../rlvm-sdl2-mod/src/systems/base/text_system.cc
+--- ./src/systems/base/text_system.cc	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/src/systems/base/text_system.cc	Wed Mar 25 13:50:30 2020
+@@ -880,7 +880,10 @@
+         // Try to read a second character. We don't care if it fails.
+         ReadFullwidthLatinLetter(cur, strindex);
+       } else {
+-        throw rlvm::Exception("Malformed name construct in bytecode!");
++	// It was "as-is" character, not a name reference.
++	output += (char)0x81;
++	output += type;
++	continue;
+       }
+ 
+       int index = Memory::ConvertLetterIndexToInt(strindex);

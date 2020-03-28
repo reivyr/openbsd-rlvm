@@ -1,0 +1,29 @@
+--- ./src/systems/sdl/sdl_music.cc	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/src/systems/sdl/sdl_music.cc	Fri Mar 27 23:03:51 2020
+@@ -148,6 +148,7 @@
+ 
+   int count;
+   if (!s_bgm_enabled || !music || music->music_paused_) {
++    stream = (Uint8*) malloc(len);
+     memset(stream, 0, len);
+     return;
+   }
+@@ -179,6 +180,7 @@
+     if (music->fade_count_ > count_total) {
+       music->loop_point_ = STOP_NOW;
+       s_currently_playing.reset();
++      stream = (Uint8*) malloc(len);
+       memset(stream, 0, len);
+       return;
+     }
+--- ./vendor/xclannad/nwatowav.cc	Wed Mar 25 09:44:31 2020
++++ ../rlvm-sdl2-mod/vendor/xclannad/nwatowav.cc	Fri Mar 27 21:51:48 2020
+@@ -569,7 +569,7 @@
+ 	if (skip_count) {
+ 		int skip_c = skip_count * channels * (bps/8);
+ 		retsize -= skip_c;
+-		memmove(data, data+skip_c, skip_c);
++		// memmove(data, data+skip_c, skip_c);
+ 		skip_count = 0;
+ 	}
+ 	curblock++;
