@@ -1,4 +1,4 @@
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConscript.luarlvm ../rlvm-sdl2-mod/SConscript.luarlvm
+diff -x .git -r -u ./SConscript.luarlvm ../rlvm-sdl2-mod/SConscript.luarlvm
 --- ./SConscript.luarlvm	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/SConscript.luarlvm	Wed Mar 25 13:52:18 2020
 @@ -35,7 +35,7 @@
@@ -10,9 +10,9 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConscript.luarlvm ../rlvm-s
  
  test_env = config.Finish()
  
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConstruct ../rlvm-sdl2-mod/SConstruct
+diff -x .git -r -u ./SConstruct ../rlvm-sdl2-mod/SConstruct
 --- ./SConstruct	Wed Mar 25 09:44:30 2020
-+++ ../rlvm-sdl2-mod/SConstruct	Thu Mar 26 09:52:41 2020
++++ ../rlvm-sdl2-mod/SConstruct	Sat Mar 28 06:29:31 2020
 @@ -19,8 +19,12 @@
  
  # Set libraries used by all configurations and all binaries in rlvm.
@@ -56,9 +56,12 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConstruct ../rlvm-sdl2-mod/
      Exit(1)
  
  def CheckForSystemLibrary(config, library_dict, componentlist):
-@@ -210,7 +216,7 @@
+@@ -208,9 +214,9 @@
+                                       'cpp',
+                                       call = library_dict['function'])
  
-   if not res:
+-  if not res:
++  if (not res or library_dict['library'] == 'SDL2_mixer'):
      lib_name = library_dict['library']
 -    print "(Using included version of %s)" % lib_name
 +    print ("(Using included version of %s)" % lib_name)
@@ -139,7 +142,7 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./SConstruct ../rlvm-sdl2-mod/
  
  if GetOption("coverage"):
    env.SConscript("SConscript.coverage",
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/buildhik.py ../rlvm-sdl2-mod/scripts/buildhik.py
+diff -x .git -r -u ./scripts/buildhik.py ../rlvm-sdl2-mod/scripts/buildhik.py
 --- ./scripts/buildhik.py	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/scripts/buildhik.py	Wed Mar 25 13:53:47 2020
 @@ -1,4 +1,4 @@
@@ -161,7 +164,7 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/buildhik.py ../rlvm-
    exit(-1)
  
  with open(sys.argv[1], "rb") as input:
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/dumphik.py ../rlvm-sdl2-mod/scripts/dumphik.py
+diff -x .git -r -u ./scripts/dumphik.py ../rlvm-sdl2-mod/scripts/dumphik.py
 --- ./scripts/dumphik.py	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/scripts/dumphik.py	Wed Mar 25 13:54:50 2020
 @@ -1,4 +1,4 @@
@@ -194,7 +197,7 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/dumphik.py ../rlvm-s
  with open(sys.argv[2], "w") as f:
 -  print >>f, json.dumps(results, sort_keys=True, indent=4)
 +  print (json.dumps(results, sort_keys=True, indent=4), file=f)
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/fix_guards.py ../rlvm-sdl2-mod/scripts/fix_guards.py
+diff -x .git -r -u ./scripts/fix_guards.py ../rlvm-sdl2-mod/scripts/fix_guards.py
 --- ./scripts/fix_guards.py	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/scripts/fix_guards.py	Wed Mar 25 13:55:07 2020
 @@ -1,4 +1,4 @@
@@ -203,7 +206,7 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./scripts/fix_guards.py ../rlv
  
  import sys
  import os
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./site_scons/site_tools/rlvm.py ../rlvm-sdl2-mod/site_scons/site_tools/rlvm.py
+diff -x .git -r -u ./site_scons/site_tools/rlvm.py ../rlvm-sdl2-mod/site_scons/site_tools/rlvm.py
 --- ./site_scons/site_tools/rlvm.py	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/site_scons/site_tools/rlvm.py	Wed Mar 25 13:57:03 2020
 @@ -1,4 +1,4 @@
@@ -235,7 +238,7 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./site_scons/site_tools/rlvm.p
      # We must unpack each entry in LIBS and try to locate a static library to
      old_libs = cloned_env['LIBS']
      libpaths = cloned_env['LIBPATH']
-diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./src/systems/base/text_system.cc ../rlvm-sdl2-mod/src/systems/base/text_system.cc
+diff -x .git -r -u ./src/systems/base/text_system.cc ../rlvm-sdl2-mod/src/systems/base/text_system.cc
 --- ./src/systems/base/text_system.cc	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/src/systems/base/text_system.cc	Wed Mar 25 13:50:30 2020
 @@ -880,7 +880,10 @@
@@ -250,3 +253,37 @@ diff -x .git -x sdl_music.cc -x nwatowav.cc -r -u ./src/systems/base/text_system
        }
  
        int index = Memory::ConvertLetterIndexToInt(strindex);
+diff -x .git -r -u ./vendor/SDL2_mixer/src/mixer.c ../rlvm-sdl2-mod/vendor/SDL2_mixer/src/mixer.c
+--- ./vendor/SDL2_mixer/src/mixer.c	Wed Mar 25 09:44:30 2020
++++ ../rlvm-sdl2-mod/vendor/SDL2_mixer/src/mixer.c	Sat Mar 28 06:30:28 2020
+@@ -143,10 +143,10 @@
+ {
+     int result = 0;
+ 
+-    if (flags & MIX_INIT_FLUIDSYNTH) {
+-#ifdef USE_FLUIDSYNTH_MIDI
+-        if ((initialized & MIX_INIT_FLUIDSYNTH) || Mix_InitFluidSynth() == 0) {
+-            result |= MIX_INIT_FLUIDSYNTH;
++    if (flags & MIX_INIT_MID) {
++#ifdef USE_FLUIDSYNTH_MID
++        if ((initialized & MIX_INIT_MID) || Mix_InitFluidSynth() == 0) {
++            result |= MIX_INIT_MID;
+         }
+ #else
+         Mix_SetError("Mixer not built with FluidSynth support");
+@@ -159,15 +159,6 @@
+         }
+ #else
+         Mix_SetError("Mixer not built with FLAC support");
+-#endif
+-    }
+-    if (flags & MIX_INIT_MODPLUG) {
+-#ifdef MODPLUG_MUSIC
+-        if ((initialized & MIX_INIT_MODPLUG) || Mix_InitModPlug() == 0) {
+-            result |= MIX_INIT_MODPLUG;
+-        }
+-#else
+-        Mix_SetError("Mixer not built with MOD modplug support");
+ #endif
+     }
+     if (flags & MIX_INIT_MOD) {

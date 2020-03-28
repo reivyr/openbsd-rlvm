@@ -1,3 +1,4 @@
+diff -x .git -r -u ./src/systems/sdl/sdl_music.cc ../rlvm-sdl2-mod/src/systems/sdl/sdl_music.cc
 --- ./src/systems/sdl/sdl_music.cc	Wed Mar 25 09:44:30 2020
 +++ ../rlvm-sdl2-mod/src/systems/sdl/sdl_music.cc	Fri Mar 27 23:03:51 2020
 @@ -148,6 +148,7 @@
@@ -16,6 +17,7 @@
        memset(stream, 0, len);
        return;
      }
+diff -x .git -r -u ./vendor/xclannad/nwatowav.cc ../rlvm-sdl2-mod/vendor/xclannad/nwatowav.cc
 --- ./vendor/xclannad/nwatowav.cc	Wed Mar 25 09:44:31 2020
 +++ ../rlvm-sdl2-mod/vendor/xclannad/nwatowav.cc	Fri Mar 27 21:51:48 2020
 @@ -569,7 +569,7 @@
