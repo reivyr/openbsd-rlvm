@@ -1,0 +1,90 @@
+diff -x *.git -r -u ./SConstruct ../rlvm-mod/SConstruct
+--- ./SConstruct	Wed Mar 25 06:08:15 2020
++++ ../rlvm-mod/SConstruct	Sat Mar 28 13:40:13 2020
+@@ -19,8 +19,12 @@
+ 
+ # Set libraries used by all configurations and all binaries in rlvm.
+ env = Environment(
++  ENV = os.environ,
++
+   tools = ["default", "rlvm"],
+ 
++  LIBPATH = ["/usr/local/lib"],
++
+   LIBS = ["z"],
+ 
+   LOCAL_LIBS = [],
+@@ -29,6 +33,8 @@
+     "#/build",
+     "#/src",
+     "#/vendor",
++    "/usr/X11R6/include",
++    "/usr/local/include"
+   ],
+ 
+   CPPFLAGS = [
+@@ -81,7 +87,7 @@
+       "boost_iostreams",
+       "boost_filesystem",
+       "boost_date_time",
+-      "boost_thread",
++      "boost_thread-mt",
+       "boost_system"])
+ 
+ if GetOption("fullstatic"):
+@@ -285,6 +291,7 @@
+ # Get the configuration from sdl and freetype
+ env.ParseConfig("sdl-config --cflags")
+ env.ParseConfig("freetype-config --cflags --libs")
++config.CheckLibWithHeader('intl', 'libintl.h', "cpp")
+ 
+ env = config.Finish()
+ 
+@@ -313,7 +320,6 @@
+   # Now add release optimizations to the environment
+   env.Append(
+     CPPFLAGS = [
+-      "-Os",
+       "-DNDEBUG",
+       "-DBOOST_DISABLE_ASSERTS"
+     ]
+@@ -359,13 +365,7 @@
+              "profiler"]
+   )
+ else:
+-  # Add debugging flags to all binaries here
+-  env.Append(
+-    CPPFLAGS = [
+-      "-g",
+-      "-O0"
+-    ]
+-  )
++  pass
+ 
+ # Cross platform core of rlvm. Produces librlvm.a and libsystem_sdl.a
+ env.SConscript("SConscript",
+@@ -385,24 +385,6 @@
+                  variant_dir="$BUILD_DIR/",
+                  duplicate=0,
+                  exports='env')
+-
+-# Copy the platform independent SEEN.TXT files to output (we no longer depend
+-# on rldev because I can no longer reliably compile it).
+-env.SConscript("test/SConscript.rlc",
+-               variant_dir="build/test",
+-               duplicate=0,
+-               exports='env')
+-
+-# Build the rlvmTests binary that uses those SEEN.TXT files.
+-env.SConscript("SConscript.test",
+-               variant_dir="$BUILD_DIR/",
+-               duplicate=0,
+-               exports='env')
+-
+-env.SConscript("SConscript.luarlvm",
+-               variant_dir="$BUILD_DIR/",
+-               duplicate=0,
+-               exports='env')
+ 
+ if GetOption("coverage"):
+   env.SConscript("SConscript.coverage",
