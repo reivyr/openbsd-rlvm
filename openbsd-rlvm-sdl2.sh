@@ -35,7 +35,7 @@ scons --release
 # Final Message
 
 echo "You can use rlvm in the build directory of rlvm-sdl2:"
-echo "cd build"
+echo "cd rlvm-sdl2/build"
 echo "./rlvm --font /path-to-font /path-to-game-directory"
 echo "You can use /usr/local/share/fonts/vlgothic/VL-Gothic-Regular.ttf as a font"
 echo "but you can try other fonts of your preference. I choose that because"
