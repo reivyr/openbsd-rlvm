@@ -2,13 +2,13 @@
 
 set -e
 
-DEP=$(pkg_info -z | grep -E '^(scons|sdl2|sdl2-ttf|sdl2-image|sdl2-mixer|vlgothic)\-\-' | wc -l)
+DEP=$(pkg_info -z | grep -E '^(scons|gettext-tools|sdl2|sdl2-ttf|sdl2-image|sdl2-mixer|vlgothic)\-\-' | wc -l)
 
-if [ "$DEP" -eq 6 ]
+if [ "$DEP" -eq 7 ]
 then
 	echo "Dependencies installed"
 else
-	echo "Dependencies missing. Required packages are scons, sdl2, sdl2-ttf, sdl2-image, sdl2-mixer, vlgothic"
+	echo "Dependencies missing. Required packages are scons, gettext-tools, sdl2, sdl2-ttf, sdl2-image, sdl2-mixer, vlgothic"
 	exit 1
 fi
 
