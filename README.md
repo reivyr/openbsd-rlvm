@@ -3,7 +3,7 @@
 Patch to run rlvm to play some RealLive's visual novels on OpenBSD!
 
 
-Download the script `openbsd-rlvm-sdl2.sh`. Please read the content before execute it in your machine. I use a [sdl2 fork of rlvm](https://github.com/FWGS/rlvm) by [a1batross](https://github.com/a1batross) but you can use the original [rlvm repository](https://github.com/eglaysher/rlvm) (currently it uses sdl and has more dependencies) by [eglaysher](https://github.com/eglaysher) with the script `openbsd-rlvm-sdl.sh`.
+Download the script `openbsd-rlvm-sdl2.sh`. Please read the content before execute it in your machine. I use a [sdl2 fork of rlvm](https://github.com/FWGS/rlvm) by [a1batross](https://github.com/a1batross) but you can use the [original rlvm repository](https://github.com/eglaysher/rlvm) (currently it uses sdl and has more dependencies) by [eglaysher](https://github.com/eglaysher) with the script `openbsd-rlvm-sdl.sh`.
 
 
 `ftp https://raw.githubusercontent.com/reivyr/openbsd-rlvm/master/openbsd-rlvm-sdl2.sh`
@@ -29,7 +29,10 @@ The game directory is the directory that contains `Seen.txt`.
 
 ## Playing games
 
-I only played [CLANNAD](https://store.steampowered.com/app/324160/) and [Planetarian](https://store.steampowered.com/app/316720/). A detailed list of games can be found [here](https://github.com/eglaysher/rlvm/blob/master/STATUS.TXT). A notable difference that I found was that I can use the Dangopedia on CLANNAD and I can't use the in-game menu (right click) in Planetarian(in the sdl version it crashes the game and in the sdl2 version it does nothing) so you need to close the window in Planetarian to exit the game (don't forget to save your progress before that). Please read the **Additional notes** section for other details.
+I only played [CLANNAD](https://store.steampowered.com/app/324160/) and [Planetarian](https://store.steampowered.com/app/316720/). A detailed list of games can be found [here](https://github.com/eglaysher/rlvm/blob/master/STATUS.TXT). A notable difference that I found was that I can use the Dangopedia on CLANNAD and I can't use the in-game menu (right click) in Planetarian (in the sdl version it crashes the game and in the sdl2 version it does nothing) so you need to close the window in Planetarian to exit the game (don't forget to save your progress before that). Please read the **Additional notes** section for other details.
+
+
+You can't watch the opening in CLANNAD because [it seems rlvm doesn't support it](https://github.com/eglaysher/rlvm/issues/47) but if you want to try the real experience please watch it with your favorite video player after finishing Nagisa's route.
 
 
 These two games are on steam and you can use `depotdownloader` from packages. Please read `/usr/local/share/doc/pkg-readmes/depotdownloader` and its [repository](https://github.com/SteamRE/DepotDownloader).
@@ -61,5 +64,5 @@ I don't build the tests with these patches but you can try it. I tested them (wi
 Some of these patches on this repository were based on the [FreeBSD port of rlvm](https://svnweb.freebsd.org/ports/head/devel/rlvm/files/?pathrev=478836).
 
 
-Personally, I use the sdl2 fork and I see that these changes are in this [pull request](https://github.com/eglaysher/rlvm/pull/86) to the main repository.
+**Personally, I use the sdl2 fork and I see that these changes are in this [pull request](https://github.com/eglaysher/rlvm/pull/86) to the main repository.**
 
